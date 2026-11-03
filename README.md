@@ -76,19 +76,19 @@ LLM_MODEL=local
 
 ```bash
 ollama serve
-ollama pull qwen2.5:14b
+ollama pull gemma4:12b
 ```
 
 ```dotenv
 LLM_BASE_URL=http://127.0.0.1:11434/v1
-LLM_MODEL=qwen2.5:14b
+LLM_MODEL=gemma4:12b
 ```
 
 ### Вариант 3. Внешний API (OpenAI и совместимые)
 
 ```dotenv
 LLM_BASE_URL=https://api.openai.com/v1
-LLM_MODEL=gpt-4o-mini
+LLM_MODEL=gpt-5.5
 LLM_API_KEY=sk-...
 ```
 
@@ -109,13 +109,18 @@ LLM_API_KEY=sk-...
 
 | Провайдер | `LLM_BASE_URL` | Пример `LLM_MODEL` |
 | --- | --- | --- |
-| OpenAI | `https://api.openai.com/v1` | `gpt-4o-mini` |
+| OpenAI | `https://api.openai.com/v1` | `gpt-5.5` |
 | Google Gemini | `https://generativelanguage.googleapis.com/v1beta/openai` | `gemini-3.8-flash` |
 | DeepSeek | `https://api.deepseek.com/v1` | `deepseek-flash` |
-| OpenRouter | `https://openrouter.ai/api/v1` | `openai/gpt-4o-mini` |
-| Ollama | `http://127.0.0.1:11434/v1` | `qwen2.5:14b` |
+| OpenRouter | `https://openrouter.ai/api/v1` | `openai/gpt-5.5` |
+| Ollama | `http://127.0.0.1:11434/v1` | `gemma4:12b` |
 | llama.cpp | `http://127.0.0.1:8080/v1` | `local` |
 | LM Studio | `http://127.0.0.1:1234/v1` | `local` |
+
+Идентификаторы моделей у провайдеров меняются каждые несколько месяцев —
+в таблице актуальные на момент сдачи. Перед запуском сверьтесь с каталогом
+провайдера: `GET /v1/models` покажет доступные вашей учётной записи,
+а `check_llm.py` подскажет, если имя не найдено.
 
 `check_llm.py` делает два запроса — список моделей и короткий chat-запрос — и пишет,
 что именно поправить: ключ, адрес или имя модели. Заодно показывает, сколько
