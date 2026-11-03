@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Генератор карточек товаров — КИП</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232f5bea'/></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="appbar">
+    <div class="appbar__inner">
+      <div class="brand">
+        <span class="brand__mark">КИП</span>
+        <span class="brand__text">
+          <strong>Генератор карточек</strong>
+          <small>черновик для контент-менеджера B2B-каталога</small>
+        </span>
+      </div>
+      <div class="status" id="status">
+        <span class="status__dot"></span>
+        <span class="status__text">проверяю модель…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="panel__head">
+        <div>
+          <h2>Данные прибора</h2>
+          <p class="panel__sub">Характеристики переносятся в карточку дословно</p>
+        </div>
+        <div class="examples">
+          <span class="examples__label">Примеры:</span>
+          <button type="button" class="btn btn--chip" id="load-example-1">Датчик давления</button>
+          <button type="button" class="btn btn--chip" id="load-example-2">Реле давления</button>
+        </div>
+      </div>
+
+      <form id="product-form" class="form" novalidate>
+        <div class="form__section">
+          <h3 class="form__legend">Товар</h3>
+          <label class="field">
+            <span class="field__label">Название <b>*</b></span>
+            <input name="name" id="name" type="text" required
+                   placeholder="Например, ПД100-ДИ1,6-111-0,5">
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">Производитель</span>
+              <input name="manufacturer" id="manufacturer" type="text" placeholder="ОВЕН">
+            </label>
+            <label class="field">
+              <span class="field__label">Категория</span>
+              <input name="category" id="category" type="text" placeholder="Датчики давления">
+            </label>
+          </div>
+        </div>
+
+        <div class="form__section">
+          <div class="form__legendrow">
+            <h3 class="form__legend">Характеристики</h3>
+            <button type="button" class="btn btn--link" id="add-spec">+ добавить</button>
+          </div>
+          <div id="specs" class="specs"></div>
+        </div>
+
+        <div class="form__section">
+          <h3 class="form__legend">Описание</h3>
+          <label class="field">
+            <span class="field__label">Текст с сайта или фрагмент техпаспорта</span>
+            <textarea name="description" id="description" rows="6"
+                      placeholder="Прибор предназначен для измерения избыточного давления…"></textarea>
+          </label>
+        </div>
+
+        <div class="form__footer">
+          <button type="submit" class="btn btn--primary btn--lg" id="submit">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/>
+              <path d="M18 15l.9 2.1 2.1.9-2.1.9L18 21l-.9-2.1-2.1-.9 2.1-.9L18 15z"/>
+            </svg>
+            <span class="btn__label">Сгенерировать карточку</span>
+          </button>
+          <button type="button" class="btn btn--ghost" id="reset">Очистить</button>
+        </div>
+        <p class="form__note" id="form-note"></p>
+      </form>
+    </section>
+
+    <section class="panel panel--result">
+      <div class="panel__head">
+        <div>
+          <h2>Результат</h2>
+          <p class="panel__sub" id="result-sub">Карточка появится здесь</p>
+        </div>
+        <div class="tabs" id="tabs" hidden>
+          <button type="button" class="tab is-active" data-tab="card">Карточка</button>
+          <button type="button" class="tab" data-tab="markdown">Markdown</button>
+          <button type="button" class="tab" data-tab="json">JSON</button>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="empty">
+          <svg class="empty__icon" viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="9" y="6" width="30" height="36" rx="3"/>
+            <path d="M15 14h12M15 20h18M15 26h18M15 32h10"/>
+          </svg>
+          <strong>Здесь появится карточка</strong>
+          <p>Заполните данные слева или загрузите готовый пример.</p>
+          <ul class="empty__list">
+            <li>SEO-заголовок и описание</li>
+            <li>Характеристики с проверкой по входным данным</li>
+            <li>Поисковые запросы и блок для менеджера</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="result__footer" id="result-footer" hidden>
+        <button type="button" class="btn btn--primary" id="copy">Скопировать</button>
+        <button type="button" class="btn btn--ghost" id="download">Скачать .md</button>
+        <span class="copy-note" id="copy-note"></span>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <template id="spec-row">
+    <div class="spec-row">
+      <input class="spec-name" type="text" placeholder="Диапазон измерений">
+      <input class="spec-value" type="text" placeholder="0–1,6 МПа">
+      <button type="button" class="spec-remove" title="Удалить" aria-label="Удалить характеристику">×</button>
+    </div>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
